@@ -1,7 +1,7 @@
 %subgradient method
 
 load('data.mat');
-max_iter = 10;
+max_iter = 100;
 U = 5;
 N = size(L,1);
 query = uint8(zeros(N,1)); % mark which query it is in f
@@ -24,11 +24,11 @@ one = ones(1,size(L,1));
 g = updateSubgradient(x,f,query,U,N);
 
 alpha = 1/norm(g)^2;
-f_best = getValue(x,f,query);
+f_best = sum(getValue(x,f,query));
 % start iteration
 for i = 1:max_iter
     x = x - alpha .* g;
-    value = getValue(x,f,query);
+    value = sum(getValue(x,f,query));
     if (value < f_best)
         f_best = value;
     end
