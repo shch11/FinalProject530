@@ -1,4 +1,4 @@
-function g = updateSubgradient(x,f,query,U,N)
+function [g, alpha] = updateSubgradient(x,f,query,U,N,ep)
     if (ones(1, N) * x > U)
         g = - ones(N,1);
         return;
@@ -17,6 +17,21 @@ function g = updateSubgradient(x,f,query,U,N)
         end
     end
     
-    g = getSubgradient(x,f,query);
+    [m,max_i] = max([ones(1, N) * x - U;-x;x-f(query,1)]);
+    if m <= 0
+        g = getSubgradient(x,f,query);
+        alpha = -1;
+    else
+        if max_i == 1
+            g = - ones(N,1);
+        elseif max_i <= 1 + N
+            g = zeros(N,1);
+            g(max_i - 1) = -1;
+        else 
+            g = zeros(N,1);
+            g(max_i - 1 - N) = 1;
+        end
+        alpha = (m + ep)/(norm(g)^2);
+    end
 
 end
